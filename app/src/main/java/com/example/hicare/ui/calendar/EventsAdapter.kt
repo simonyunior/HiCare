@@ -1,0 +1,44 @@
+package com.example.hicare.ui.calendar
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.example.hicare.R
+
+class EventsAdapter(private var events: Map<String, List<String>> = emptyMap()) : RecyclerView.Adapter<EventsAdapter.EventViewHolder>() {
+
+    private var currentEvents: List<String> = emptyList()
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_event, parent, false)
+        return EventViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
+        holder.bind(currentEvents[position])
+    }
+
+    override fun getItemCount(): Int {
+        return currentEvents.size
+    }
+
+    fun updateEvents(date: String) {
+        currentEvents = events[date] ?: emptyList()
+        notifyDataSetChanged()
+    }
+
+    fun setEvents(events: Map<String, List<String>>) {
+        this.events = events
+        notifyDataSetChanged()
+    }
+
+    class EventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val textView: TextView = itemView.findViewById(R.id.textView)
+
+        fun bind(event: String) {
+            textView.text = event
+        }
+    }
+}
