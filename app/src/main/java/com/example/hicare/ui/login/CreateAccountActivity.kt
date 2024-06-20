@@ -81,7 +81,7 @@ class CreateAccountActivity : AppCompatActivity() {
                         if (registerResponse?.status == "success") {
                             showSnackbar(registerResponse.message)
                             runOnUiThread {
-                                finish()  // Close the activity
+                                finish()
                             }
                         } else {
                             showSnackbar(registerResponse?.message ?: "Unknown error")

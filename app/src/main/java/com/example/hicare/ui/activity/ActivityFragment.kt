@@ -39,16 +39,21 @@ class ActivityFragment : Fragment() {
 
         btnPredictPoints.setOnClickListener {
             val activityInput = etActivityInput.text.toString()
+            val capitalizedActivityInput = capitalizeWords(activityInput)
             val username = getUsername()
 
-            if (activityInput.isNotEmpty() && username.isNotEmpty()) {
-                predictPoints(username, activityInput)
+            if (capitalizedActivityInput.isNotEmpty() && username.isNotEmpty()) {
+                predictPoints(username, capitalizedActivityInput)
             } else {
                 Toast.makeText(context, "Please enter an activity", Toast.LENGTH_SHORT).show()
             }
         }
 
         return view
+    }
+
+    private fun capitalizeWords(input: String): String {
+        return input.split(" ").joinToString(" ") { it.capitalize() }
     }
 
     private fun getUsername(): String {

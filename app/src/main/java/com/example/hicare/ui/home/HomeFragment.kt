@@ -39,16 +39,21 @@ class HomeFragment : Fragment() {
 
         btnPredictCalories.setOnClickListener {
             val mealInput = etMealInput.text.toString()
+            val capitalizedMealInput = capitalizeWords(mealInput)
             val username = getUsername()
 
-            if (mealInput.isNotEmpty() && username.isNotEmpty()) {
-                predictCalories(username, mealInput)
+            if (capitalizedMealInput.isNotEmpty() && username.isNotEmpty()) {
+                predictCalories(username, capitalizedMealInput)
             } else {
                 Toast.makeText(context, "Please enter a food item", Toast.LENGTH_SHORT).show()
             }
         }
 
         return view
+    }
+
+    private fun capitalizeWords(input: String): String {
+        return input.split(" ").joinToString(" ") { it.capitalize() }
     }
 
     private fun getUsername(): String {

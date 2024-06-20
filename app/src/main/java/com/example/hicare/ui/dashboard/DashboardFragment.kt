@@ -48,9 +48,9 @@ class DashboardFragment : Fragment() {
     private fun fetchAndDisplayTotals() {
         val sharedPref = activity?.getSharedPreferences("HiCare", Context.MODE_PRIVATE)
         val totalCalories = sharedPref?.getFloat("TOTAL_CALORIES", 0f) ?: 0f
-        val totalPoints = sharedPref?.getFloat("TOTAL_POINTS", 0f) ?: 0f
+        val totalPoints = sharedPref?.getFloat("TOTAL_POINTS", 0f)?.toInt() ?: 0
 
         tvTotalCalories.text = "${decimalFormat.format(totalCalories)} kcal"
-        tvTotalPoints.text = "${decimalFormat.format(totalPoints)} "
+        tvTotalPoints.text = "$totalPoints"
     }
 }
