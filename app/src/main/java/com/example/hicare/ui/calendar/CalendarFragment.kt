@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hicare.R
@@ -15,11 +17,11 @@ import java.util.*
 
 class CalendarFragment : Fragment() {
 
+    private val viewModel: CalendarViewModel by viewModels()
     private lateinit var calendarView: CalendarView
     private lateinit var btnAddEvent: ImageButton
     private lateinit var recyclerView: RecyclerView
-    private val events = mutableMapOf<String, MutableList<String>>()
-    private val adapter = EventsAdapter(events)
+    private lateinit var adapter: EventsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,6 +33,7 @@ class CalendarFragment : Fragment() {
         btnAddEvent = view.findViewById(R.id.btnAddEvent)
         recyclerView = view.findViewById(R.id.recyclerView)
 
+        adapter = EventsAdapter()
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapter
 
@@ -40,8 +43,13 @@ class CalendarFragment : Fragment() {
 
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             val selectedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(GregorianCalendar(year, month, dayOfMonth).time)
-            adapter.updateEvents(selectedDate)
+            adapter.updateEvents(viewModel.getEvents(selectedDate))
         }
+
+        viewModel.events.observe(viewLifecycleOwner, Observer { events ->
+            val selectedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(calendarView.date))
+            adapter.updateEvents(events[selectedDate] ?: emptyList())
+        })
 
         return view
     }
@@ -66,14 +74,8 @@ class CalendarFragment : Fragment() {
                 val time = String.format(Locale.getDefault(), "%02d:%02d %s", if (hour % 12 == 0) 12 else hour % 12, minute, if (hour >= 12) "PM" else "AM")
                 val event = "$time: $activity"
 
-                if (!events.containsKey(selectedDate)) {
-                    events[selectedDate] = mutableListOf()
-                }
-                events[selectedDate]?.add(event)
-
+                viewModel.addEvent(selectedDate, event)
                 Toast.makeText(context, "Event '$activity' added on $selectedDate at $time", Toast.LENGTH_SHORT).show()
-                adapter.setEvents(events)
-                adapter.updateEvents(selectedDate)
                 dialog.dismiss()
             } else {
                 Toast.makeText(context, "Please enter an activity", Toast.LENGTH_SHORT).show()

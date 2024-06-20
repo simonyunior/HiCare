@@ -7,9 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hicare.R
 
-class EventsAdapter(private var events: Map<String, List<String>> = emptyMap()) : RecyclerView.Adapter<EventsAdapter.EventViewHolder>() {
-
-    private var currentEvents: List<String> = emptyList()
+class EventsAdapter(private var currentEvents: List<String> = emptyList()) : RecyclerView.Adapter<EventsAdapter.EventViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_event, parent, false)
@@ -24,13 +22,8 @@ class EventsAdapter(private var events: Map<String, List<String>> = emptyMap()) 
         return currentEvents.size
     }
 
-    fun updateEvents(date: String) {
-        currentEvents = events[date] ?: emptyList()
-        notifyDataSetChanged()
-    }
-
-    fun setEvents(events: Map<String, List<String>>) {
-        this.events = events
+    fun updateEvents(events: List<String>) {
+        currentEvents = events
         notifyDataSetChanged()
     }
 

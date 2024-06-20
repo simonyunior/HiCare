@@ -7,8 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.fragment.app.Fragment
-import com.example.hicare.R
+import android.widget.Button
 import android.widget.TextView
+import com.example.hicare.R
 import java.text.DecimalFormat
 
 class DashboardFragment : Fragment() {
@@ -16,6 +17,7 @@ class DashboardFragment : Fragment() {
     private lateinit var tvTotalCalories: TextView
     private lateinit var tvTotalPoints: TextView
     private lateinit var tvWelcome: TextView
+    private lateinit var btnClear: Button
     private val decimalFormat = DecimalFormat("#.##")
 
     override fun onCreateView(
@@ -27,6 +29,7 @@ class DashboardFragment : Fragment() {
         tvTotalCalories = view.findViewById(R.id.tvTotalCalories)
         tvTotalPoints = view.findViewById(R.id.tvTotalPoints)
         tvWelcome = view.findViewById(R.id.tvWelcome)
+        btnClear = view.findViewById(R.id.btnClear)
 
         val username = getUsername()
         tvWelcome.text = "Hello, $username"
@@ -36,6 +39,10 @@ class DashboardFragment : Fragment() {
         val scaleUp = AnimationUtils.loadAnimation(context, R.anim.scale_up)
         tvTotalCalories.startAnimation(scaleUp)
         tvTotalPoints.startAnimation(scaleUp)
+
+        btnClear.setOnClickListener {
+            clearTotals()
+        }
 
         return view
     }
@@ -52,5 +59,18 @@ class DashboardFragment : Fragment() {
 
         tvTotalCalories.text = "${decimalFormat.format(totalCalories)} kcal"
         tvTotalPoints.text = "$totalPoints"
+    }
+
+    private fun clearTotals() {
+        val sharedPref = activity?.getSharedPreferences("HiCare", Context.MODE_PRIVATE)
+        val editor = sharedPref?.edit()
+
+        editor?.remove("TOTAL_CALORIES")
+        editor?.remove("TOTAL_POINTS")
+
+        editor?.apply()
+
+        tvTotalCalories.text = "0 kcal"
+        tvTotalPoints.text = "0"
     }
 }
